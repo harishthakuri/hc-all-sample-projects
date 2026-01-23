@@ -1,0 +1,115 @@
+﻿
+XUnit Project for Dot Net core
+
+Default Nuget packages when we create XUnit Test project
+
+	coverlet.collector
+	Microsoft.NET.Test.Sdk
+	xunit
+	xunit.runner.visualstudio
+
+we can also install coverlet.msbuild package if we want to integrate Coverlet with MSBuild
+
+
+###### Coverlet code coverage  https://github.com/coverlet-coverage/coverlet
+
+###### 1. ================= Sample Test project *.csproj ================= ######
+
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+	   <!-- Coverlet integration with MSBuild -->
+    <PackageReference Include="coverlet.msbuild" Version="3.1.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+	  
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
+    <PackageReference Include="Moq" Version="4.16.1" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    
+     <!-- Coverlet integration with MSBuild -->
+	<PackageReference Include="coverlet.collector" Version="3.0.2">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference> 
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MOQExample\MOQExample.csproj" />
+  </ItemGroup>
+
+</Project>
+
+######  Sample Test project *.csproj END ######
+
+
+
+###### 2. ================= coverlet.runsettings file ================= ######
+###### https://github.com/coverlet-coverage/coverlet/blob/master/Documentation/VSTestIntegration.md
+
+<?xml version="1.0" encoding="utf-8" ?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat code coverage">
+        <Configuration>
+          <Format>json</Format> 
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>
+
+###### coverlet.runsettings file END ######
+
+
+
+
+@@@@@@@@@ MSBuild Test Report generation
+###### https://github.com/coverlet-coverage/coverlet/blob/master/Documentation/MSBuildIntegration.md#excluding-from-coverage
+###### 3. ================= coverlet.msbuild generate test report ================= ######
+
+dotnet test /p:CollectCoverage=true
+
+###### coverlet.msbuild generate test report END ######
+
+
+@@@@@@@@@@@@@ OR 
+
+
+@@@@@@@@@ Collector Test Report generation
+
+###### 3. ================= coverlet.collector generate test report ================= ######
+
+dotnet test --collect:"XPlat Code Coverage"
+
+
+Note: above command will create a xml file in ""TestResults > GUID > coverage.cobertura.xml"
+
+###### coverlet.collector generate test report END ######
+
+
+
+@@@@@@@@@ Generate reports (HTML)
+###### 4. ================= Install Report Generator ================= ######
+
+dotnet tool install -g dotnet-reportgenerator-globaltool
+
+
+-------- Console / Command Line
+reportgenerator
+-reports:"Path\To\TestProject\TestResults\{guid}\coverage.cobertura.xml"
+-targetdir:"coveragereport"
+-reporttypes:Html
+
+e.g.
+E:\DotNet Projects\TDDWithMOQ\MOQExample.Test\TestResults\7160e576-c331-438d-89f1-443bcb78f181> reportgenerator -reports:"coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
