@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Concurrency_Sample", "Concurrency_Sample.csproj", "{1034C5F9-42D4-4277-B83D-2FF98DE5F44F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi-Concurrency", "WebApi-Concurrency.csproj", "{1034C5F9-42D4-4277-B83D-2FF98DE5F44F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{18349B8D-DE8A-4CE1-9F7C-502466C93B9B}"
 	ProjectSection(SolutionItems) = preProject

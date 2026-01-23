@@ -7,11 +7,16 @@ public class BankTransferService : IBankTransferService
 {
     private readonly ApplicationDbContext _context;
     private readonly ILogger<BankTransferService> _logger;
+    private readonly IDatabaseProvider _dbProvider;
 
-    public BankTransferService(ApplicationDbContext context, ILogger<BankTransferService> logger)
+    public BankTransferService(
+        ApplicationDbContext context, 
+        ILogger<BankTransferService> logger,
+        IDatabaseProvider dbProvider)
     {
         _context = context;
         _logger = logger;
+        _dbProvider = dbProvider;
     }
 
     public async Task<IEnumerable<AccountDto>> GetAllAccountsAsync()
@@ -145,7 +150,7 @@ public class BankTransferService : IBankTransferService
     /// <summary>
     /// Transfer with PESSIMISTIC concurrency (using database locks).
     /// Better for high-contention scenarios like flash sales.
-    /// Uses SQL Server's UPDLOCK hint to lock rows during the transaction.
+    /// Uses provider-specific row locking (UPDLOCK for SQL Server, FOR UPDATE for PostgreSQL).
     /// </summary>
     public async Task<TransferResult> TransferWithPessimisticLockAsync(TransferDto dto)
     {
@@ -169,14 +174,16 @@ public class BankTransferService : IBankTransferService
                 ? (dto.FromAccountId, dto.ToAccountId)
                 : (dto.ToAccountId, dto.FromAccountId);
 
-            // Use raw SQL with UPDLOCK and ROWLOCK hints for pessimistic locking
-            // UPDLOCK: Acquire update lock (prevents other transactions from acquiring update/exclusive locks)
-            // ROWLOCK: Lock at row level (not page or table level) for better concurrency
+            // Use provider-specific locking SQL (works for both SQL Server and PostgreSQL)
+            // SQL Server: SELECT * FROM BankAccounts WITH (UPDLOCK, ROWLOCK) WHERE ...
+            // PostgreSQL: SELECT * FROM BankAccounts WHERE ... FOR UPDATE
             // The locks are held until the transaction completes (commit or rollback)
+            var lockSql = _dbProvider.GetLockRowsForUpdateSql(
+                "BankAccounts", 
+                $"Id IN ({firstId}, {secondId})");
+            
             var accounts = await _context.BankAccounts
-                .FromSqlRaw(@"
-                    SELECT * FROM BankAccounts WITH (UPDLOCK, ROWLOCK) 
-                    WHERE Id IN ({0}, {1})", firstId, secondId)
+                .FromSqlRaw(lockSql)
                 .ToListAsync();
 
             var fromAccount = accounts.FirstOrDefault(a => a.Id == dto.FromAccountId);

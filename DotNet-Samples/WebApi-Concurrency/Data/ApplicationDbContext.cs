@@ -101,9 +101,10 @@ public class ApplicationDbContext : DbContext
                 .IsConcurrencyToken();
             
             // Check constraint for non-negative balance
+            // Using unquoted identifier works on both SQL Server and PostgreSQL
             entity.ToTable(t => t.HasCheckConstraint(
                 "CK_BankAccounts_Balance", 
-                "[Balance] >= 0"));
+                "Balance >= 0"));
         });
     }
 
@@ -131,14 +132,15 @@ public class ApplicationDbContext : DbContext
                 .OnDelete(DeleteBehavior.Restrict);
             
             // Check constraints
+            // Using unquoted identifiers works on both SQL Server and PostgreSQL
             entity.ToTable(t =>
             {
                 t.HasCheckConstraint(
                     "CK_Transfers_DifferentAccounts",
-                    "[FromAccountId] <> [ToAccountId]");
+                    "FromAccountId <> ToAccountId");
                 t.HasCheckConstraint(
                     "CK_Transfers_PositiveAmount",
-                    "[Amount] > 0");
+                    "Amount > 0");
             });
             
             entity.HasIndex(e => e.FromAccountId);
