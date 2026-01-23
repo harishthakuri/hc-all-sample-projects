@@ -1,5 +1,8 @@
 ## Elite Barcode Generate
 
+![image description](https://github.com/harishthakuri/hc-all-sample-projects/blob/main/NextJs/barcode/public/barcode.png)
+
+
 ### Getting Started
 
 ```bash
