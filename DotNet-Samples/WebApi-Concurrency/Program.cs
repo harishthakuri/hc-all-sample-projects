@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-
+using WebApi.Configuration;
 
 namespace WebApi;
 
@@ -9,60 +9,8 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add DbContext with dynamic provider selection
-        var dbProvider = builder.Configuration.GetValue<string>("Database:Provider", "SqlServer");
-        
-        builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        {
-            switch (dbProvider.ToLower())
-            {
-                case "sqlserver":
-                    options.UseSqlServer(
-                        builder.Configuration.GetConnectionString("SqlServerConnection"),
-                        sqlOptions =>
-                        {
-                            // Enable retry on failure for transient errors (connection issues, deadlocks)
-                            sqlOptions.EnableRetryOnFailure(
-                                maxRetryCount: 3,
-                                maxRetryDelay: TimeSpan.FromSeconds(5),
-                                errorNumbersToAdd: null);
-                            // Set command timeout (default is 30 seconds)
-                            sqlOptions.CommandTimeout(30);
-                        });
-                    break;
-                    
-                case "postgresql":
-                case "postgres":
-                    options.UseNpgsql(
-                        builder.Configuration.GetConnectionString("PostgreSqlConnection"),
-                        npgsqlOptions =>
-                        {
-                            // Enable retry on failure for transient errors
-                            npgsqlOptions.EnableRetryOnFailure(
-                                maxRetryCount: 3,
-                                maxRetryDelay: TimeSpan.FromSeconds(5),
-                                errorCodesToAdd: null);
-                            // Set command timeout
-                            npgsqlOptions.CommandTimeout(30);
-                        });
-                    break;
-                    
-                default:
-                    throw new InvalidOperationException(
-                        $"Unsupported database provider: {dbProvider}. Supported providers: SqlServer, PostgreSql");
-            }
-        });
-
-        // Register database provider based on configuration
-        builder.Services.AddSingleton<IDatabaseProvider>(sp =>
-        {
-            return dbProvider.ToLower() switch
-            {
-                "sqlserver" => new SqlServerProvider(),
-                "postgresql" or "postgres" => new PostgreSqlProvider(),
-                _ => throw new InvalidOperationException($"Unsupported database provider: {dbProvider}")
-            };
-        });
+        // Add database services with validated configuration (Options pattern)
+        builder.Services.AddDatabaseServices(builder.Configuration);
 
         // Register services for dependency injection
         builder.Services.AddScoped<IProductService, ProductService>();
