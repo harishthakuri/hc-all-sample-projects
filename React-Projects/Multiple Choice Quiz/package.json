@@ -1,0 +1,34 @@
+{
+  "name": "multiple-choice-quiz",
+  "version": "1.0.0",
+  "description": "A web-based Multiple Choice Quiz application with session-based progress tracking",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm --parallel -r dev",
+    "dev:client": "pnpm --filter client dev",
+    "dev:server": "pnpm --filter server dev",
+    "build": "pnpm --parallel -r build",
+    "build:client": "pnpm --filter client build",
+    "build:server": "pnpm --filter server build",
+    "db:generate": "pnpm --filter server db:generate",
+    "db:migrate": "pnpm --filter server db:migrate",
+    "db:push": "pnpm --filter server db:push",
+    "db:studio": "pnpm --filter server db:studio",
+    "lint": "pnpm --parallel -r lint",
+    "clean": "pnpm --parallel -r clean"
+  },
+  "keywords": [
+    "quiz",
+    "react",
+    "typescript",
+    "drizzle",
+    "postgresql"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}
