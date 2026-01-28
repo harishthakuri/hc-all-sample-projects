@@ -1,0 +1,68 @@
+# Build artifacts
+**/bin/
+**/obj/
+**/out/
+
+# IDEs and editors
+.vs/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Test results
+TestResults/
+*.trx
+*.coverage
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+!README.md
+docs/
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# CI/CD
+.github/
+*.yml
+*.yaml
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+*.tmp
+tmp/
+temp/
+
+# Scripts
+*.sh
+*.ps1
+
+# Other
+LICENSE
+.editorconfig
+global.json

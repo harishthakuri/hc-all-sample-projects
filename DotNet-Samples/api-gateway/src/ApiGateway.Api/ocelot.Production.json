@@ -1,0 +1,92 @@
+{
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/api/users",
+      "UpstreamHttpMethod": ["Get", "Post"],
+      "DownstreamPathTemplate": "/users",
+      "DownstreamScheme": "https",
+      "ServiceName": "user-service",
+      "LoadBalancerOptions": {
+        "Type": "RoundRobin"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
+      "AddHeadersToDownstream": {
+        "Authorization": "Bearer {DownstreamHeaderValue:Authorization}"
+      },
+      "RouteClaimsRequirement": {
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "Admin,User"
+      },
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1s",
+        "PeriodTimespan": 1,
+        "Limit": 100
+      },
+      "QoSOptions": {
+        "ExceptionsAllowedBeforeBreaking": 5,
+        "DurationOfBreak": 30000,
+        "TimeoutValue": 10000
+      },
+      "FileCacheOptions": {
+        "TtlSeconds": 60,
+        "Region": "users"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/users/{id}",
+      "UpstreamHttpMethod": ["Get"],
+      "DownstreamPathTemplate": "/users/{id}",
+      "DownstreamScheme": "https",
+      "ServiceName": "user-service",
+      "LoadBalancerOptions": {
+        "Type": "RoundRobin"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
+      "AddHeadersToDownstream": {
+        "Authorization": "Bearer {DownstreamHeaderValue:Authorization}"
+      },
+      "RouteClaimsRequirement": {
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "Admin,User"
+      },
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1s",
+        "PeriodTimespan": 1,
+        "Limit": 100
+      },
+      "QoSOptions": {
+        "ExceptionsAllowedBeforeBreaking": 5,
+        "DurationOfBreak": 30000,
+        "TimeoutValue": 10000
+      },
+      "FileCacheOptions": {
+        "TtlSeconds": 60,
+        "Region": "user-details"
+      }
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "https://api-gateway.production.com",
+    "RateLimitOptions": {
+      "DisableRateLimitHeaders": false,
+      "QuotaExceededMessage": "Rate limit exceeded. Please try again later.",
+      "HttpStatusCode": 429,
+      "ClientIdHeader": "ClientId"
+    },
+    "ServiceDiscoveryProvider": {
+      "Scheme": "https",
+      "Host": "consul.production.internal",
+      "Port": 8500,
+      "Type": "Consul",
+      "Token": "${CONSUL_ACL_TOKEN}"
+    }
+  }
+}

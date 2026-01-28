@@ -23,6 +23,7 @@ Thumbs.db
 
 .idea/
 .pnpm-store/
+.vscode/
 
 
 # User-specific files (MonoDevelop/Xamarin Studio)
