@@ -24,7 +24,9 @@ This is a **single route configuration** in `ocelot.json` that defines how the A
 ### 1. **UpstreamPathTemplate** (Client-Facing Route)
 
 ```json
-"UpstreamPathTemplate" : "/api/products/{id}"
+{
+  "UpstreamPathTemplate": "/api/products/{id}"
+}
 ```
 
 - This is the **public API route** that clients call
@@ -35,7 +37,11 @@ This is a **single route configuration** in `ocelot.json` that defines how the A
 ### 2. **UpstreamHttpMethod** (Allowed HTTP Methods)
 
 ```json
-"UpstreamHttpMethod": [ "Get" ]
+{
+  "UpstreamHttpMethod": [
+    "Get"
+  ]
+}
 ```
 
 - Only **GET** requests are allowed on this route
@@ -45,7 +51,7 @@ This is a **single route configuration** in `ocelot.json` that defines how the A
 ### 3. **DownstreamPathTemplate** (Microservice Route)
 
 ```json
-"DownstreamPathTemplate": "/products/{id}"
+{"DownstreamPathTemplate": "/products/{id}"}
 ```
 
 - This is the **actual route** on the downstream Product Service
@@ -56,7 +62,9 @@ This is a **single route configuration** in `ocelot.json` that defines how the A
 ### 4. **DownstreamScheme** (Protocol)
 
 ```json
-"DownstreamScheme": "http"
+{
+  "DownstreamScheme": "http"
+}
 ```
 
 - Use `http` or `https` to connect to the downstream service
@@ -66,12 +74,14 @@ This is a **single route configuration** in `ocelot.json` that defines how the A
 ### 5. **DownstreamHostAndPorts** (Service Location)
 
 ```json
-"DownstreamHostAndPorts": [
-  {
-    "Host": "product-service",
-    "Port": 80
-  }
-]
+{
+  "DownstreamHostAndPorts": [
+    {
+      "Host": "product-service",
+      "Port": 80
+    }
+  ]
+}
 ```
 
 - **Host**: DNS name or IP address of the microservice
@@ -82,10 +92,12 @@ This is a **single route configuration** in `ocelot.json` that defines how the A
 - **Port**: The port the microservice listens on
 - You can specify **multiple hosts** for load balancing:
   ```json
+  {
   "DownstreamHostAndPorts": [
     { "Host": "product-service-1", "Port": 80 },
     { "Host": "product-service-2", "Port": 80 }
   ]
+  }
   ```
 
 ## Request Flow Example
@@ -137,7 +149,7 @@ Product Service → Gateway → Client (same response body/headers)
   "UpstreamHttpMethod": ["Get"],
   "DownstreamPathTemplate": "/products/{id}",
   "DownstreamScheme": "http",
-  "ServiceName": "product-service", // No DownstreamHostAndPorts needed
+  "ServiceName": "product-service", 
   "LoadBalancerOptions": {
     "Type": "RoundRobin"
   }
